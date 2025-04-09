@@ -31,3 +31,13 @@ The dataset used is from the **Bank Marketing Data Set** available at the UCI Ma
    ```bash
    git clone https://github.com/Apekshaj04/BankMarketing.git
    cd BankMarketing
+   ```
+2.  Install requirements
+   ```bash
+      pip install -r requirements.txt
+```
+
+3. Run the app
+   ```bash
+   streamlit run app.py
+```
