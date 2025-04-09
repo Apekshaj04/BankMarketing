@@ -40,4 +40,4 @@ The dataset used is from the **Bank Marketing Data Set** available at the UCI Ma
 3. Run the app
    ```bash
    streamlit run app.py
-```
+ 
