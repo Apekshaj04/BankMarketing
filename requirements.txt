@@ -5,3 +5,9 @@ scikit-learn
 matplotlib
 seaborn
 SMOTE
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+imbalanced-learn
