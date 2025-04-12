@@ -5,10 +5,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score
+from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_csv("https://raw.githubusercontent.com/Apekshaj04/BankMarketing/refs/heads/main/bank.csv", sep=";")
+df = pd.read_csv("https://raw.githubusercontent.com/Apekshaj04/BankMarketing/main/bank.csv", sep=";")
 
 columns_to_drop = ['day', 'duration', 'pdays', 'default']
 df.drop(columns=columns_to_drop, inplace=True)
@@ -26,16 +27,15 @@ for col in columns_to_encode:
 
 Y = df['y']
 X = df.drop(columns=['y'])
+
+smote = SMOTE(random_state=42)
+X, Y = smote.fit_resample(X, Y)
+
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 st.title("📊 Bank Marketing KNN Classifier")
 
 k = st.sidebar.slider("Select value of K (neighbors)", 1, 15, 5)
-
-knn = KNeighborsClassifier(n_neighbors=k)
-knn.fit(X_train, Y_train)
-Y_pred_test = knn.predict(X_test)
-test_accuracy = accuracy_score(Y_test, Y_pred_test)
 
 st.sidebar.header("📥 Enter Input Features")
 user_input = []
@@ -47,8 +47,15 @@ for col in X.columns:
         encoded = category_mappings[col][selected]
         user_input.append(encoded)
     else:
-        value = st.sidebar.number_input(f"{col}", value=int(X[col].mean()))
+        default_val = int(X[col].mean())
+        min_val = 0 if col in ['age', 'balance'] else int(X[col].min())
+        value = st.sidebar.number_input(f"{col}", value=default_val, min_value=min_val)
         user_input.append(value)
+
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X_train, Y_train)
+Y_pred_test = knn.predict(X_test)
+test_accuracy = accuracy_score(Y_test, Y_pred_test)
 
 if st.button("Predict"):
     input_array = np.array([user_input])
@@ -66,6 +73,7 @@ st.subheader("📉 KNN Accuracy vs K")
 train_scores = []
 test_scores = []
 k_range = range(1, 21)
+
 for i in k_range:
     model = KNeighborsClassifier(n_neighbors=i)
     model.fit(X_train, Y_train)
